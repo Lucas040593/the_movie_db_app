@@ -61,6 +61,7 @@ class _HomeViewState extends State<HomeView> {
                     const Padding(padding: EdgeInsets.all(20)),
                     _builSectionTitle('Popular Movies'),
                     const Padding(padding: EdgeInsets.all(10)),
+                    //Populares
                     _buildPopularMovies(),
                   ],
                 ),
