@@ -1,48 +1,46 @@
-// To parse this JSON data, do
-//
-//     final movie = movieFromJson(jsonString);
-
-import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
 import 'dart:convert';
 
 Movie movieFromJson(String str) => Movie.fromJson(json.decode(str));
 
 String movieToJson(Movie data) => json.encode(data.toJson());
 
-class Movie {
-    Movie({
-        required this.adult,
-        required this.backdropPath,
-        required this.genreIds,
-        required this.id,
-        required this.originalLanguage,
-        required this.originalTitle,
-        required this.overview,
-        required this.popularity,
-        required this.posterPath,
-        required this.releaseDate,
-        required this.title,
-        required this.video,
-        required this.voteAverage,
-        required this.voteCount,
-    });
+class Movie with ChangeNotifier {
+  Movie({
+    required this.adult,
+    required this.backdropPath,
+    required this.genreIds,
+    required this.id,
+    required this.originalLanguage,
+    required this.originalTitle,
+    required this.overview,
+    required this.popularity,
+    required this.posterPath,
+    required this.releaseDate,
+    required this.title,
+    required this.video,
+    required this.voteAverage,
+    required this.voteCount,
+    required this.check,
+  });
 
-    bool adult;
-    String backdropPath;
-    List<int> genreIds;
-    int id;
-    String originalLanguage;
-    String originalTitle;
-    String overview;
-    double popularity;
-    String posterPath;
-    String releaseDate;
-    String title;
-    bool video;
-    double voteAverage;
-    int voteCount;
+  bool adult;
+  String backdropPath;
+  List<int> genreIds;
+  int id;
+  String originalLanguage;
+  String originalTitle;
+  String overview;
+  double popularity;
+  String posterPath;
+  String releaseDate;
+  String title;
+  bool video;
+  double voteAverage;
+  int voteCount;
+  bool check = false;
 
-    factory Movie.fromJson(Map<String, dynamic> json) => Movie(
+  factory Movie.fromJson(Map<String, dynamic> json) => Movie(
         adult: json["adult"],
         backdropPath: json["backdrop_path"] ?? '',
         genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
@@ -57,9 +55,10 @@ class Movie {
         video: json["video"],
         voteAverage: json["vote_average"].toDouble(),
         voteCount: json["vote_count"],
-    );
+        check: false,
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "adult": adult,
         "backdrop_path": backdropPath,
         "genre_ids": List<dynamic>.from(genreIds.map((x) => x)),
@@ -74,5 +73,6 @@ class Movie {
         "video": video,
         "vote_average": voteAverage,
         "vote_count": voteCount,
-    };
+        "check": check,
+      };
 }
