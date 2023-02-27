@@ -1,6 +1,6 @@
 # the_movie_db_app
 
-A new Flutter project.
+Proyecto de ejemplo de una App de películas
 
 ## Getting Started
 
