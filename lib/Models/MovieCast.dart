@@ -1,44 +1,41 @@
-// To parse this JSON data, do
-//
-//     final movieCast = movieCastFromJson(jsonString);
-
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
-List<MovieCast> movieCastFromJson(String str) => List<MovieCast>.from(json.decode(str).map((x) => MovieCast.fromJson(x)));
+List<MovieCast> movieCastFromJson(String str) =>
+    List<MovieCast>.from(json.decode(str).map((x) => MovieCast.fromJson(x)));
 
-String movieCastToJson(List<MovieCast> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String movieCastToJson(List<MovieCast> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class MovieCast {
-    MovieCast({
-        required this.adult,
-        required this.gender,
-        required this.id,
-        required this.knownForDepartment,
-        required this.name,
-        required this.originalName,
-        required this.popularity,
-        required this.profilePath,
-        required this.castId,
-        required this.character,
-        required this.creditId,
-        required this.order,
-    });
+  MovieCast({
+    required this.adult,
+    required this.gender,
+    required this.id,
+    required this.knownForDepartment,
+    required this.name,
+    required this.originalName,
+    required this.popularity,
+    required this.profilePath,
+    required this.castId,
+    required this.character,
+    required this.creditId,
+    required this.order,
+  });
 
-    bool adult;
-    int gender;
-    int id;
-    String knownForDepartment;
-    String name;
-    String originalName;
-    double popularity;
-    String profilePath;
-    int castId;
-    String character;
-    String creditId;
-    int order;
+  bool adult;
+  int gender;
+  int id;
+  String knownForDepartment;
+  String name;
+  String originalName;
+  double popularity;
+  String profilePath;
+  int castId;
+  String character;
+  String creditId;
+  int order;
 
-    factory MovieCast.fromJson(Map<String, dynamic> json) => MovieCast(
+  factory MovieCast.fromJson(Map<String, dynamic> json) => MovieCast(
         adult: json["adult"],
         gender: json["gender"],
         id: json["id"],
@@ -51,9 +48,9 @@ class MovieCast {
         character: json["character"],
         creditId: json["credit_id"],
         order: json["order"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "adult": adult,
         "gender": gender,
         "id": id,
@@ -66,5 +63,5 @@ class MovieCast {
         "character": character,
         "credit_id": creditId,
         "order": order,
-    };
+      };
 }

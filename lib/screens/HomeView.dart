@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:the_movie_db_app/Models/Movie.dart';
+import 'package:the_movie_db_app/provider/Movie_provider.dart';
 import 'package:the_movie_db_app/screens/SearchView.dart';
 import 'package:the_movie_db_app/services/MoviesService.dart';
 import 'package:the_movie_db_app/theme/CustomColors.dart';
@@ -26,6 +28,8 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     _popularMoviesScrollController = ScrollController()
       ..addListener(_scrollPopularMoviesListener);
+    final dataProvider = Provider.of<MovieProvider>(context, listen: false);
+    dataProvider.getMyData();
   }
 
   @override
@@ -37,13 +41,19 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final moviesProvider = Provider.of<MovieProvider>(context);
+    final theme = Provider.of<ThemeChanger>(context);
+
     return Scaffold(
         appBar: AppBar(
-          title: const Text('The Movie DB App'),
-          centerTitle: true,
-          backgroundColor: CustomColors.secondary,
+          title: Text("Movie App"),
+          backgroundColor: CustomColors.main,
           leading: Container(),
-          actions: [_buildSearchButton()],
+          actions: [
+            _buildSearchButton(),
+            _buildDarkButton(theme),
+            _buildLightButton(theme),
+          ],
         ),
         body: WillPopScope(
             onWillPop: () async => false,
@@ -56,13 +66,14 @@ class _HomeViewState extends State<HomeView> {
                     //Peliculas en cartelera
                     _builSectionTitle('Now Playing Movies'),
                     const Padding(padding: EdgeInsets.all(10)),
-                    _buildNowPlayingMovies(),
+                    //Cartelera
+                    _buildNowPlayingMovies(moviesProvider),
                     //Peliculas populares
                     const Padding(padding: EdgeInsets.all(20)),
                     _builSectionTitle('Popular Movies'),
                     const Padding(padding: EdgeInsets.all(10)),
                     //Populares
-                    _buildPopularMovies(),
+                    _buildPopularMovies(moviesProvider),
                   ],
                 ),
               ),
@@ -88,22 +99,45 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  //Espera a recibir la lista de objetos Movie (en cartelera) y mientras muestra un spinner.
-  Widget _buildNowPlayingMovies() {
-    return FutureBuilder(
-      future: _getNowPlayingMovies(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          return _buildNowPlayingMoviesList(snapshot.data);
-        } else {
-          return const SizedBox(
-              width: 80, height: 80, child: CircularProgressIndicator());
-        }
-      },
+  //Boton para cambiar theme
+  Widget _buildDarkButton(ThemeChanger theme) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 20),
+      child: GestureDetector(
+        child: const Icon(Icons.dark_mode),
+        onTap: () {
+          theme.setTheme(ThemeData(
+              scaffoldBackgroundColor: CustomColors.fondoDark,
+              fontFamily: 'Montserrat'));
+        },
+      ),
     );
   }
 
-  //Carga la lista de objetos Movie (en cartelera) en un ListView horizontal.
+  //Boton para cambiar theme
+  Widget _buildLightButton(ThemeChanger theme) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 20),
+      child: GestureDetector(
+        child: const Icon(Icons.sunny),
+        onTap: () {
+          theme.setTheme(ThemeData(
+              scaffoldBackgroundColor: CustomColors.fondoLight,
+              fontFamily: 'Montserrat'));
+        },
+      ),
+    );
+  }
+
+  //Espera a recibir la lista y mientras muestra un spinner.
+  Widget _buildNowPlayingMovies(MovieProvider moviesProvider) {
+    return moviesProvider.isLoading
+        ? const SizedBox(
+            width: 80, height: 80, child: CircularProgressIndicator())
+        : _buildNowPlayingMoviesList(moviesProvider.moviesList);
+  }
+
+  //Carga la lista en un ListView horizontal.
   Widget _buildNowPlayingMoviesList(List<Movie> lista) {
     return SizedBox(
         height: 280,
@@ -116,29 +150,15 @@ class _HomeViewState extends State<HomeView> {
             }));
   }
 
-  //Llama a Movies services y le pide una lista de objetos Movie (en cartelera), de peliculas populares.
-  Future _getNowPlayingMovies() {
-    return MoviesService.getNowPlayingMovies().then((value) {
-      return value;
-    });
+  //Espera a recibir la lista y mientras muestra un spinner.
+  Widget _buildPopularMovies(MovieProvider moviesProvider) {
+    return moviesProvider.isLoading
+        ? const SizedBox(
+            width: 80, height: 80, child: CircularProgressIndicator())
+        : _buildPopularMoviesList(moviesProvider.moviesListPopular);
   }
 
-  //Espera a recibir la lista de objetos Movie (populares) y mientras muestra un spinner.
-  Widget _buildPopularMovies() {
-    return FutureBuilder(
-      future: _getPopularMovies(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          return _buildPopularMoviesList(snapshot.data);
-        } else {
-          return const SizedBox(
-              width: 80, height: 80, child: CircularProgressIndicator());
-        }
-      },
-    );
-  }
-
-  //Carga la lista de objetos Movie (populares) en un ListView horizontal.
+  //Carga la lista en un ListView horizontal.
   Widget _buildPopularMoviesList(List<Movie> lista) {
     _popularMoviesList += lista;
     return SizedBox(
@@ -153,7 +173,7 @@ class _HomeViewState extends State<HomeView> {
             }));
   }
 
-  //Llama a Movies services y le pide una lista de objetos Movie (populares), de peliculas en cartelera.
+  //Llama a Movies services y le pide una lista para cargar las peliculas al pasar scroll horizontal.
   Future _getPopularMovies() async {
     return MoviesService.getPopularMovies(_popularMoviesPage).then((value) {
       return value;

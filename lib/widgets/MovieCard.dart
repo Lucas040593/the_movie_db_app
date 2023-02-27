@@ -15,7 +15,7 @@ class MovieCard extends StatefulWidget {
 class _MovieCardState extends State<MovieCard> {
 final double _lateralMargin = 20;
 
-  //Card on un placeholder de la imagen y el titulo de la pelicula, cuando recibe la imagen de la url sustituye al placeholder. Al pulsar lleva a los detalles de la
+  //Card con un placeholder de la imagen y el titulo de la pelicula, cuando recibe la imagen de la url sustituye al placeholder. Al pulsar lleva a los detalles de la
   //pelicula
   @override
   Widget build(BuildContext context) {
